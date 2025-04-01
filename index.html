@@ -1,18 +1,24 @@
 
 <!DOCTYPE html>
+
 <html lang="zh-Hant">
 <head>
-    <meta charset="UTF-8">
-    <title>搜尋總表</title>
-    <style>
+<meta charset="utf-8"/>
+<title>搜尋總表（點擊排序版）</title>
+<style>
         body {
             font-family: Arial, sans-serif;
             padding: 20px;
         }
+        input[type="text"] {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 12px;
+            font-size: 16px;
+        }
         table {
             border-collapse: collapse;
             width: 100%;
-            table-layout: auto;
         }
         th, td {
             border: 1px solid #ccc;
@@ -21,630 +27,687 @@
         }
         th {
             background-color: #f2f2f2;
+            cursor: pointer;
         }
         tr:hover {
             background-color: #f9f9f9;
         }
+        mark {
+            background-color: transparent;
+            color: red;
+            font-weight: bold;
+        }
     </style>
 </head>
-<body>
-    <h2>搜尋總表</h2>
-    <p>提示：請使用 Ctrl+F 或手機瀏覽器的「在網頁中搜尋」來快速查找內容。</p>
-    <table border="1" class="dataframe table">
-  <thead>
-    <tr style="text-align: center;">
-      <th>樓層</th>
-      <th>櫃子編號</th>
-      <th>內容物</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td>2F倉庫</td>
-      <td>中(下樓梯)</td>
-      <td>公主, (p)065, (p)359, (p)203, (p)344, (p)225 牛仔綿, (p)044 初戀, (p)214, (p)185, (o)時尚, 4365, 楓葉, 吉米, 黛夢, t恤綿, 凌波, 小木屋, 雅樂, 莉朵, 派兒, 米娜, 天使羽毛, 瑪可, 森林, 彩風, 1008, 1089, 1087, 1052, 1851, 1200, 1007, 1083, 1081, 1761, 1083, 1021, 9360, 9370, 1149, no 410, no 11</td>
-    </tr>
-    <tr>
-      <td>2F倉庫</td>
-      <td>前(靠電梯)</td>
-      <td>仙蒂, t金票, 4352, 4326, 4325, 義大利美麗諾, 義61, q比, 活力紙線, 依綿, 毛球, 哈吉</td>
-    </tr>
-    <tr>
-      <td>2F倉庫</td>
-      <td>後(靠窗)</td>
-      <td>樂菲, dmc拇指線, 1039, 1084, 韋德, 純淨, 維妮, 肯特, 雲朵, 貝瑞, no 201, no 202, no 206, 波波, 杜思, 彩虹, 芭比, 法雅, 4351, 4408, 4360, 伊特, 柏金, 鞋底(as11), 包底, 帽沿(101), 珍珠花線, 葛瑞絲, 德國羽毛, 碧玉, 4313, emmy baby</td>
-    </tr>
-    <tr>
-      <td>3F 倉庫</td>
-      <td>1</td>
-      <td>1878,1096,1286,emmy 10g 50g,m金票,金票 70番,1036,1021,no404,(p)波蘿,仙特,trio 貴的線</td>
-    </tr>
-    <tr>
-      <td>3F 倉庫</td>
-      <td>2</td>
-      <td>莉莉毛海,1035,1036,1037,莎莎紙線,莎莎扁線,瑞克,4315,(p)022,l金票,m金票25g,1040,t金票</td>
-    </tr>
-    <tr>
-      <td>3F 倉庫</td>
-      <td>3</td>
-      <td>環保線,金票10g 50g,1073,1591</td>
-    </tr>
-    <tr>
-      <td>3F 倉庫</td>
-      <td>4</td>
-      <td>1784,(p)204咘咘,柔伊baby,蜜雪兒,艾莉絲,(p)171,(p)287莉卡,(p)288莉卡</td>
-    </tr>
-    <tr>
-      <td>3F 倉庫</td>
-      <td>5</td>
-      <td>皇家,(p)155鳥語,(p)154星辰,派樂斯,佛洛瑞,元氣</td>
-    </tr>
-    <tr>
-      <td>3F 倉庫</td>
-      <td>6</td>
-      <td>(p)110,(p)489波波,樂福,1045,1046,1047,皇冠</td>
-    </tr>
-    <tr>
-      <td>3F 倉庫</td>
-      <td>7</td>
-      <td>1070,(p)272寶貝安妮(素),(p)273寶貝安妮(段),(p)271光輝,(p)031公主</td>
-    </tr>
-    <tr>
-      <td>3F 倉庫</td>
-      <td>8</td>
-      <td>派兒,dmc彩繪,1014安德斯,dmc茱麗葉,貝里斯,亞力,大美可</td>
-    </tr>
-    <tr>
-      <td>3F 倉庫</td>
-      <td>9</td>
-      <td>菲諾,dmc閃亮,花朵,莫夫,波力,森林,小木屋,格蘭</td>
-    </tr>
-    <tr>
-      <td>3F 倉庫</td>
-      <td>10</td>
-      <td>拉拉,絲光,自然防縮,法米,1053</td>
-    </tr>
-    <tr>
-      <td>3F 倉庫</td>
-      <td>11</td>
-      <td>1781,(p)246嬰兒,(p)061英雄,拉莉,1090,1049,米奇</td>
-    </tr>
-    <tr>
-      <td>3F 倉庫</td>
-      <td>12</td>
-      <td>1791,寶庫,(p)208魯特,(p)209風吹雪,偉士,瑪露妮,1009</td>
-    </tr>
-    <tr>
-      <td>3F 倉庫</td>
-      <td>13</td>
-      <td>流星,1088,莉朵,糖糖,雪兒,宮廷,哈士奇</td>
-    </tr>
-    <tr>
-      <td>3F 倉庫</td>
-      <td>14</td>
-      <td>4357,蜜卡蕾,活力紙線,(p)214伊予,(p)053,(p)054</td>
-    </tr>
-    <tr>
-      <td>3F 倉庫</td>
-      <td>15</td>
-      <td>4344,(p)087抗菌線,4323,dmc金蔥 蕾絲,(p)362肯納</td>
-    </tr>
-    <tr>
-      <td>3F 倉庫</td>
-      <td>16</td>
-      <td>4361,4364,雪寶,克蘭斯,emmy baby 段染</td>
-    </tr>
-    <tr>
-      <td>3F 倉庫</td>
-      <td>17</td>
-      <td>dmc 382 baby,4349,(p)225 牛仔棉,emmy 段染,柔依夏紗,4362,4365,tiara</td>
-    </tr>
-    <tr>
-      <td>3F 倉庫</td>
-      <td>18</td>
-      <td>4345,4340,爪哇,(p)377 麻線,(p)388 心動,(p)389 辛巴,(p)029 雲彩</td>
-    </tr>
-    <tr>
-      <td>3F 倉庫</td>
-      <td>19</td>
-      <td>(p)378,凜,諾維亞,埃及棉,帕柔,家園</td>
-    </tr>
-    <tr>
-      <td>3F 倉庫</td>
-      <td>20</td>
-      <td>維尼,哈尼,(p)179 星空,dmc 天然棉,夏拉,no 21</td>
-    </tr>
-    <tr>
-      <td>3F 倉庫</td>
-      <td>21</td>
-      <td>預約線,4301緞帶,(p)477,no 14,no 15,no 18,汗可</td>
-    </tr>
-    <tr>
-      <td>3F 倉庫</td>
-      <td>22</td>
-      <td>baby手勾紗,義51,4647,1010,1022,星河,絲光紗,1013,1264,蜻蜓,毛草,no 27,py3010</td>
-    </tr>
-    <tr>
-      <td>3F 倉庫</td>
-      <td>23</td>
-      <td>tutti,1026,戀戀,絲柔,儷仕,席娜,帝寶,感覺,no 3,no 4,no 106,no 209</td>
-    </tr>
-    <tr>
-      <td>3F 倉庫</td>
-      <td>樓梯下</td>
-      <td>4294,pop (可樂牌),florista(可樂牌),1795,樂福,4350,4515,(o)羽毛紗</td>
-    </tr>
-    <tr>
-      <td>3F 倉庫</td>
-      <td>走廊(中)</td>
-      <td>小夜時雨,大美可,寶庫毛海,寶庫圈圈紗,米奇,貝里斯,1764,1788,寶貝安妮(素)(段)</td>
-    </tr>
-    <tr>
-      <td>3F 倉庫</td>
-      <td>走廊(前)</td>
-      <td>派樂絲,元氣,波波,星辰,自然,鳥語,亞力,(o)絲光,p289</td>
-    </tr>
-    <tr>
-      <td>3F 倉庫</td>
-      <td>走廊(後)</td>
-      <td>(p)208,(p)209,(p)029,(p)377,雪寶,艾莉,1772,爪哇,莫內,家園,4344,熊熊,汗可</td>
-    </tr>
-    <tr>
-      <td>4F 倉庫</td>
-      <td>1</td>
-      <td>義大利亮彩紗,莎蔓紗(素),莎蔓紗(花),紅番茄,馬毛海,花毛海,巧蘭娜,琵琶,卡卡,喜悅,麥莉,琥珀,羅娜,德力,蕾西,復古,法朵,卡羅,卡巴,j268</td>
-    </tr>
-    <tr>
-      <td>4F 倉庫</td>
-      <td>2</td>
-      <td>卡西米段染,艾瑞拉,歐若拉,時光,珈瑪,安娜,vvg</td>
-    </tr>
-    <tr>
-      <td>4F 倉庫</td>
-      <td>3</td>
-      <td>段染美麗諾(dmc),可莉塔,棒棒糖,大轉轉,轉轉</td>
-    </tr>
-    <tr>
-      <td>4F 倉庫</td>
-      <td>4</td>
-      <td>美麗諾160,寶貝段染,菲力斯,芭蕾,樂菲,泰瑞,純淨</td>
-    </tr>
-    <tr>
-      <td>4F 倉庫</td>
-      <td>5</td>
-      <td>蛋糕(段染),蛋糕(金蔥),潔妮,甜心,泰迪</td>
-    </tr>
-    <tr>
-      <td>4F 倉庫</td>
-      <td>6</td>
-      <td>空氣(dmc),艾思妮,柏金,蕾西,尼兒,挪威</td>
-    </tr>
-    <tr>
-      <td>4F 倉庫</td>
-      <td>7</td>
-      <td>交響曲,雪花,德力,琥珀</td>
-    </tr>
-    <tr>
-      <td>4F 倉庫</td>
-      <td>8</td>
-      <td>大雪尼,茉莉,女神,悠瑪</td>
-    </tr>
-    <tr>
-      <td>4F 倉庫</td>
-      <td>9</td>
-      <td>珍珠卡西米,巴樂羽毛,卡蜜兒,復古,鑽石</td>
-    </tr>
-    <tr>
-      <td>4F 倉庫</td>
-      <td>10</td>
-      <td>巴黎寶貝,貝露,魅影</td>
-    </tr>
-    <tr>
-      <td>4F 倉庫</td>
-      <td>11</td>
-      <td>卡蕾多,仙朵,雪克,海洋,安泰,格紋</td>
-    </tr>
-    <tr>
-      <td>4F 倉庫</td>
-      <td>12</td>
-      <td>空氣段染,活力羽毛,紐薇拉,艾美,極品,羅娜,卡克</td>
-    </tr>
-    <tr>
-      <td>4F 倉庫</td>
-      <td>13</td>
-      <td>美麗諾105,娜拉,卡拉,麗莎,卡斯,喬治</td>
-    </tr>
-    <tr>
-      <td>4F 倉庫</td>
-      <td>14</td>
-      <td>雅樂,路比,蕾娜,狂熱,魔幻</td>
-    </tr>
-    <tr>
-      <td>4F 倉庫</td>
-      <td>15</td>
-      <td>芙蓉圈圈紗,段染美麗諾,蘭妮,(o)angle羽毛,雲朵(德),奧地利,鄉村(素)</td>
-    </tr>
-    <tr>
-      <td>4F 倉庫</td>
-      <td>16</td>
-      <td>美可,卡巴,艾瑞拉,碧絲,達芬妮,威尼斯</td>
-    </tr>
-    <tr>
-      <td>4F 倉庫</td>
-      <td>17</td>
-      <td>1584</td>
-    </tr>
-    <tr>
-      <td>4F 倉庫</td>
-      <td>18</td>
-      <td>工具雜物,手把,織布機</td>
-    </tr>
-    <tr>
-      <td>4F 倉庫</td>
-      <td>19</td>
-      <td>12/0 松野珠,11/0 松野珠</td>
-    </tr>
-    <tr>
-      <td>4F 倉庫</td>
-      <td>20</td>
-      <td>8/0 松野珠,15/0 松野珠</td>
-    </tr>
-    <tr>
-      <td>4F 倉庫</td>
-      <td>21</td>
-      <td>821</td>
-    </tr>
-    <tr>
-      <td>4F 倉庫</td>
-      <td>22</td>
-      <td>no.66,no.32,波浪貓</td>
-    </tr>
-    <tr>
-      <td>4F 倉庫</td>
-      <td>23</td>
-      <td>802,芭雅</td>
-    </tr>
-    <tr>
-      <td>4F 倉庫</td>
-      <td>24</td>
-      <td>no.25極太,冰風暴</td>
-    </tr>
-    <tr>
-      <td>4F 倉庫</td>
-      <td>25</td>
-      <td>no.25並太,安提,金牌</td>
-    </tr>
-    <tr>
-      <td>4F 倉庫</td>
-      <td>26</td>
-      <td>米露,娜娜</td>
-    </tr>
-    <tr>
-      <td>4F 倉庫</td>
-      <td>27</td>
-      <td>可莉克,蘇菲</td>
-    </tr>
-    <tr>
-      <td>4F 倉庫</td>
-      <td>28</td>
-      <td>大波浪,鄉村(段)</td>
-    </tr>
-    <tr>
-      <td>4F 倉庫</td>
-      <td>29</td>
-      <td>謎語</td>
-    </tr>
-    <tr>
-      <td>4F 倉庫</td>
-      <td>30</td>
-      <td>仙境(素),仙境(段)</td>
-    </tr>
-    <tr>
-      <td>4F 倉庫</td>
-      <td>31</td>
-      <td>貓</td>
-    </tr>
-    <tr>
-      <td>4F 倉庫</td>
-      <td>32</td>
-      <td>貓</td>
-    </tr>
-    <tr>
-      <td>4F 倉庫</td>
-      <td>33</td>
-      <td>琪娜</td>
-    </tr>
-    <tr>
-      <td>4F 倉庫</td>
-      <td>34</td>
-      <td>1283,珍妮,愛麗絲</td>
-    </tr>
-    <tr>
-      <td>5F 倉庫</td>
-      <td>5f</td>
-      <td>熊貓,微笑,薩克,sp卡西米,百分百卡西米,澳洲金蔥,花妮,sundy,德斯,澳洲粗毛線,澳洲羽毛,東海材料包米蘭,特級段染,帕妃,金票801(100g),(p)208,(p)209</td>
-    </tr>
-    <tr>
-      <td>6F 倉庫</td>
-      <td>6f</td>
-      <td>挽套,米諾,瑪莎,妮可,卡士達,舒卡,帽網(瑕疵),熱情,巴洛,1549,表白,2050,故鄉,4348,澳洲美麗諾,no 304,1795,凱蒂紗,艾薇兒,1495,ha羽毛紗,雅克</td>
-    </tr>
-    <tr>
-      <td>外倉5F</td>
-      <td>1</td>
-      <td>鄉村段染,卡拉,時光,米娜,手搖機,德國金屬勾針,泰瑞,魔幻,卡士達</td>
-    </tr>
-    <tr>
-      <td>外倉5F</td>
-      <td>2</td>
-      <td>雅克,活力,肯特,卡士達,極品,芭比,雪克,泰迪,路比,歐若拉,女神,麗莎,卡司,艾薇諾,雲朵</td>
-    </tr>
-    <tr>
-      <td>外倉5F</td>
-      <td>3</td>
-      <td>故鄉,娜拉,妮可,楓葉,巧蘭娜,雅樂毛海,芙蓉</td>
-    </tr>
-    <tr>
-      <td>外倉5F</td>
-      <td>4</td>
-      <td>故鄉,卡雷多,巧蘭娜,波波,麗仕,娜拉,卡克</td>
-    </tr>
-    <tr>
-      <td>外倉5F</td>
-      <td>5</td>
-      <td>法雅,交響曲,瑪可,義大利亮彩紗,天使羽毛,彩虹</td>
-    </tr>
-    <tr>
-      <td>外倉5F</td>
-      <td>6</td>
-      <td>可莉塔,碧玉,卡西米段染,安娜,蘭妮,仙絲,吉米</td>
-    </tr>
-    <tr>
-      <td>外倉5F小</td>
-      <td>1</td>
-      <td>哈士奇,1036,(o)艾莉絲,(o)艾利,瑪露妮,帝寶,紐薇拉,宮廷,格蘭</td>
-    </tr>
-    <tr>
-      <td>外倉5F小</td>
-      <td>2</td>
-      <td>1010,1046,雪兒,寶庫</td>
-    </tr>
-    <tr>
-      <td>外倉5F小</td>
-      <td>3</td>
-      <td>4334,1851,1049,1052</td>
-    </tr>
-    <tr>
-      <td>外倉5F小</td>
-      <td>4</td>
-      <td>1021,1781,1087,4345,樂福,皇冠</td>
-    </tr>
-    <tr>
-      <td>外倉5F小</td>
-      <td>5</td>
-      <td>1784,4357,時尚</td>
-    </tr>
-    <tr>
-      <td>外倉5F小</td>
-      <td>6</td>
-      <td>4348,1084,1791,1772,(o)angle</td>
-    </tr>
-    <tr>
-      <td>外倉5F小</td>
-      <td>7</td>
-      <td>1090,1089,1039,1788</td>
-    </tr>
-    <tr>
-      <td>外倉5F小</td>
-      <td>8</td>
-      <td>1088,1081,4344,4362,4365,4296</td>
-    </tr>
-    <tr>
-      <td>外倉5F小</td>
-      <td>9</td>
-      <td>4361,1083,1037,1046,法朵,小時夜雨</td>
-    </tr>
-    <tr>
-      <td>外倉5F小</td>
-      <td>10</td>
-      <td>4349,1053,4364,vvg,柔伊夏紗</td>
-    </tr>
-    <tr>
-      <td>外倉5F小</td>
-      <td>11</td>
-      <td>凜,蜜雪兒,席娜,哈吉,1035,1007,1047</td>
-    </tr>
-    <tr>
-      <td>外倉5F小</td>
-      <td>12</td>
-      <td>1009,戀戀,絲柔</td>
-    </tr>
-    <tr>
-      <td>外倉5F小</td>
-      <td>13</td>
-      <td>(o)埃及,emmy段染,諾維亞,莉莉,帕柔,芭蕾,4313,1096,1286,tv106</td>
-    </tr>
-    <tr>
-      <td>外倉6F</td>
-      <td>1</td>
-      <td>魅影, 巴黎寶貝</td>
-    </tr>
-    <tr>
-      <td>外倉6F</td>
-      <td>2</td>
-      <td>莎曼紗, 卡羅, 加瑪, 卡蜜兒, tutti, 琵琶, 海洋</td>
-    </tr>
-    <tr>
-      <td>外倉6F</td>
-      <td>3</td>
-      <td>莫內, 琵琶, tutti, 黛夢, 碧絲</td>
-    </tr>
-    <tr>
-      <td>外倉6F</td>
-      <td>4</td>
-      <td>no25極太, 棒棒糖, 菲莉絲</td>
-    </tr>
-    <tr>
-      <td>外倉6F</td>
-      <td>5</td>
-      <td>no209, 珍珠卡西米, no202, no11</td>
-    </tr>
-    <tr>
-      <td>外倉6F</td>
-      <td>6</td>
-      <td>寶貝段染, 羅娜, 布條線(t血綿), 仙朵, 挪威, 琥珀, 美麗諾160, 鑽石, 喬治, 雪花, 潔妮, 艾美, 蕾娜</td>
-    </tr>
-    <tr>
-      <td>外倉6F</td>
-      <td>7</td>
-      <td>珍妮, 凱蒂紗, 復古, 艾思妮, 1761, 熱情, 蘇菲</td>
-    </tr>
-    <tr>
-      <td>外倉6F</td>
-      <td>8</td>
-      <td>德力, (o)絲光紗, 巴樂, 肯特, 葛瑞絲, 1073, 9360, 9370, no206</td>
-    </tr>
-    <tr>
-      <td>外倉6F</td>
-      <td>9</td>
-      <td>1013, no304, no3, 安提</td>
-    </tr>
-    <tr>
-      <td>外倉6F</td>
-      <td>10</td>
-      <td>no201, no14, 尼兒, 凌波, 表白, 悠瑪</td>
-    </tr>
-    <tr>
-      <td>外倉7F</td>
-      <td>1</td>
-      <td>(dmc)星河, (dmc)閃亮, (dmc)空氣, (dmc)茱麗葉, (dmc)蛋糕, (dmc)拇指線, 大波浪(c), 雲朵卡西米, 蕾西, 2050, 1073, 1070, no3, no66, 茉莉, 麥莉</td>
-    </tr>
-    <tr>
-      <td>外倉7F</td>
-      <td>2</td>
-      <td>貝露, 法821, 轉轉, 甜心, 大轉轉, 段染美麗諾, 娜娜</td>
-    </tr>
-    <tr>
-      <td>外倉7F</td>
-      <td>3</td>
-      <td>大波浪(v), 金牌, 802(胖胖紗), 琪娜, eko</td>
-    </tr>
-    <tr>
-      <td>外倉7F</td>
-      <td>4</td>
-      <td>娜娜</td>
-    </tr>
-    <tr>
-      <td>外倉7F</td>
-      <td>5</td>
-      <td>娜娜</td>
-    </tr>
-    <tr>
-      <td>外倉7F</td>
-      <td>6</td>
-      <td>澳洲粗毛海, 活力紙線</td>
-    </tr>
-    <tr>
-      <td>外倉7F</td>
-      <td>7</td>
-      <td>芭雅</td>
-    </tr>
-    <tr>
-      <td>外倉7F</td>
-      <td>8</td>
-      <td>芭雅</td>
-    </tr>
-    <tr>
-      <td>外倉7F</td>
-      <td>9</td>
-      <td>米露, 馬毛海, 澳洲羽毛紗</td>
-    </tr>
-    <tr>
-      <td>外倉7F</td>
-      <td>10</td>
-      <td>澳洲羽毛紗, 花毛海, 馬毛海</td>
-    </tr>
-    <tr>
-      <td>外倉7F</td>
-      <td>11</td>
-      <td>謎語</td>
-    </tr>
-    <tr>
-      <td>外倉7F</td>
-      <td>12</td>
-      <td>冰風暴, no411, 澳洲美麗諾</td>
-    </tr>
-    <tr>
-      <td>外倉7F</td>
-      <td>13</td>
-      <td>冰風暴</td>
-    </tr>
-    <tr>
-      <td>外倉7F</td>
-      <td>14</td>
-      <td>貓</td>
-    </tr>
-    <tr>
-      <td>外倉7F</td>
-      <td>15</td>
-      <td>艾瑞拉, no410, no27, 安泰</td>
-    </tr>
-    <tr>
-      <td>外倉7F</td>
-      <td>16</td>
-      <td>空氣段染, 17, 空氣段染, 汗可, 1264</td>
-    </tr>
-    <tr>
-      <td>外倉7F</td>
-      <td>18</td>
-      <td>橫濱, 爪哇</td>
-    </tr>
-    <tr>
-      <td>外倉7F</td>
-      <td>19</td>
-      <td>貝瑞, 家園</td>
-    </tr>
-    <tr>
-      <td>外倉7F</td>
-      <td>20</td>
-      <td>格紋</td>
-    </tr>
-    <tr>
-      <td>外倉7F</td>
-      <td>21</td>
-      <td>杜思</td>
-    </tr>
-    <tr>
-      <td>外倉7F</td>
-      <td>22</td>
-      <td>巴洛</td>
-    </tr>
-    <tr>
-      <td>外倉7F</td>
-      <td>23</td>
-      <td>巴洛, 德國羽毛, 貝瑞珍珠花線</td>
-    </tr>
-    <tr>
-      <td>外倉7F</td>
-      <td>24</td>
-      <td>義美麗諾</td>
-    </tr>
-    <tr>
-      <td>外倉7F</td>
-      <td>25</td>
-      <td>澳雅(澳洲雅樂), 河岸, no411</td>
-    </tr>
-    <tr>
-      <td>外倉7F</td>
-      <td>26</td>
-      <td>米諾, 義美麗諾</td>
-    </tr>
-    <tr>
-      <td>外倉7F</td>
-      <td>27</td>
-      <td>1591</td>
-    </tr>
-  </tbody>
+<body><h1>搜尋表</h1>
+<input id="searchInput" placeholder="請輸入關鍵字" type="text"/>
+<table id="data-table">
+<thead>
+<tr style="text-align: center;">
+<th>樓層</th>
+<th>櫃子編號</th>
+<th>內容物</th>
+</tr>
+</thead>
+<tbody id="table-body">
+<tr>
+<td>2F倉庫</td>
+<td>中(下樓梯)</td>
+<td>公主, (p)065, (p)359, (p)203, (p)344, (p)225 牛仔綿, (p)044 初戀, (p)214, (p)185, (o)時尚, 4365, 楓葉, 吉米, 黛夢, t恤綿, 凌波, 小木屋, 雅樂, 莉朵, 派兒, 米娜, 天使羽毛, 瑪可, 森林, 彩風, 1008, 1089, 1087, 1052, 1851, 1200, 1007, 1083, 1081, 1761, 1083, 1021, 9360, 9370, 1149, no 410, no 11</td>
+</tr>
+<tr>
+<td>2F倉庫</td>
+<td>前(靠電梯)</td>
+<td>仙蒂, t金票, 4352, 4326, 4325, 義大利美麗諾, 義61, q比, 活力紙線, 依綿, 毛球, 哈吉</td>
+</tr>
+<tr>
+<td>2F倉庫</td>
+<td>後(靠窗)</td>
+<td>樂菲, dmc拇指線, 1039, 1084, 韋德, 純淨, 維妮, 肯特, 雲朵, 貝瑞, no 201, no 202, no 206, 波波, 杜思, 彩虹, 芭比, 法雅, 4351, 4408, 4360, 伊特, 柏金, 鞋底(as11), 包底, 帽沿(101), 珍珠花線, 葛瑞絲, 德國羽毛, 碧玉, 4313, emmy baby</td>
+</tr>
+<tr>
+<td>3F 倉庫</td>
+<td>1</td>
+<td>1878,1096,1286,emmy 10g 50g,m金票,金票 70番,1036,1021,no404,(p)波蘿,仙特,trio 貴的線</td>
+</tr>
+<tr>
+<td>3F 倉庫</td>
+<td>2</td>
+<td>莉莉毛海,1035,1036,1037,莎莎紙線,莎莎扁線,瑞克,4315,(p)022,l金票,m金票25g,1040,t金票</td>
+</tr>
+<tr>
+<td>3F 倉庫</td>
+<td>3</td>
+<td>環保線,金票10g 50g,1073,1591</td>
+</tr>
+<tr>
+<td>3F 倉庫</td>
+<td>4</td>
+<td>1784,(p)204咘咘,柔伊baby,蜜雪兒,艾莉絲,(p)171,(p)287莉卡,(p)288莉卡</td>
+</tr>
+<tr>
+<td>3F 倉庫</td>
+<td>5</td>
+<td>皇家,(p)155鳥語,(p)154星辰,派樂斯,佛洛瑞,元氣</td>
+</tr>
+<tr>
+<td>3F 倉庫</td>
+<td>6</td>
+<td>(p)110,(p)489波波,樂福,1045,1046,1047,皇冠</td>
+</tr>
+<tr>
+<td>3F 倉庫</td>
+<td>7</td>
+<td>1070,(p)272寶貝安妮(素),(p)273寶貝安妮(段),(p)271光輝,(p)031公主</td>
+</tr>
+<tr>
+<td>3F 倉庫</td>
+<td>8</td>
+<td>派兒,dmc彩繪,1014安德斯,dmc茱麗葉,貝里斯,亞力,大美可</td>
+</tr>
+<tr>
+<td>3F 倉庫</td>
+<td>9</td>
+<td>菲諾,dmc閃亮,花朵,莫夫,波力,森林,小木屋,格蘭</td>
+</tr>
+<tr>
+<td>3F 倉庫</td>
+<td>10</td>
+<td>拉拉,絲光,自然防縮,法米,1053</td>
+</tr>
+<tr>
+<td>3F 倉庫</td>
+<td>11</td>
+<td>1781,(p)246嬰兒,(p)061英雄,拉莉,1090,1049,米奇</td>
+</tr>
+<tr>
+<td>3F 倉庫</td>
+<td>12</td>
+<td>1791,寶庫,(p)208魯特,(p)209風吹雪,偉士,瑪露妮,1009</td>
+</tr>
+<tr>
+<td>3F 倉庫</td>
+<td>13</td>
+<td>流星,1088,莉朵,糖糖,雪兒,宮廷,哈士奇</td>
+</tr>
+<tr>
+<td>3F 倉庫</td>
+<td>14</td>
+<td>4357,蜜卡蕾,活力紙線,(p)214伊予,(p)053,(p)054</td>
+</tr>
+<tr>
+<td>3F 倉庫</td>
+<td>15</td>
+<td>4344,(p)087抗菌線,4323,dmc金蔥 蕾絲,(p)362肯納</td>
+</tr>
+<tr>
+<td>3F 倉庫</td>
+<td>16</td>
+<td>4361,4364,雪寶,克蘭斯,emmy baby 段染</td>
+</tr>
+<tr>
+<td>3F 倉庫</td>
+<td>17</td>
+<td>dmc 382 baby,4349,(p)225 牛仔棉,emmy 段染,柔依夏紗,4362,4365,tiara</td>
+</tr>
+<tr>
+<td>3F 倉庫</td>
+<td>18</td>
+<td>4345,4340,爪哇,(p)377 麻線,(p)388 心動,(p)389 辛巴,(p)029 雲彩</td>
+</tr>
+<tr>
+<td>3F 倉庫</td>
+<td>19</td>
+<td>(p)378,凜,諾維亞,埃及棉,帕柔,家園</td>
+</tr>
+<tr>
+<td>3F 倉庫</td>
+<td>20</td>
+<td>維尼,哈尼,(p)179 星空,dmc 天然棉,夏拉,no 21</td>
+</tr>
+<tr>
+<td>3F 倉庫</td>
+<td>21</td>
+<td>預約線,4301緞帶,(p)477,no 14,no 15,no 18,汗可</td>
+</tr>
+<tr>
+<td>3F 倉庫</td>
+<td>22</td>
+<td>baby手勾紗,義51,4647,1010,1022,星河,絲光紗,1013,1264,蜻蜓,毛草,no 27,py3010</td>
+</tr>
+<tr>
+<td>3F 倉庫</td>
+<td>23</td>
+<td>tutti,1026,戀戀,絲柔,儷仕,席娜,帝寶,感覺,no 3,no 4,no 106,no 209</td>
+</tr>
+<tr>
+<td>3F 倉庫</td>
+<td>樓梯下</td>
+<td>4294,pop (可樂牌),florista(可樂牌),1795,樂福,4350,4515,(o)羽毛紗</td>
+</tr>
+<tr>
+<td>3F 倉庫</td>
+<td>走廊(中)</td>
+<td>小夜時雨,大美可,寶庫毛海,寶庫圈圈紗,米奇,貝里斯,1764,1788,寶貝安妮(素)(段)</td>
+</tr>
+<tr>
+<td>3F 倉庫</td>
+<td>走廊(前)</td>
+<td>派樂絲,元氣,波波,星辰,自然,鳥語,亞力,(o)絲光,p289</td>
+</tr>
+<tr>
+<td>3F 倉庫</td>
+<td>走廊(後)</td>
+<td>(p)208,(p)209,(p)029,(p)377,雪寶,艾莉,1772,爪哇,莫內,家園,4344,熊熊,汗可</td>
+</tr>
+<tr>
+<td>4F 倉庫</td>
+<td>1</td>
+<td>義大利亮彩紗,莎蔓紗(素),莎蔓紗(花),紅番茄,馬毛海,花毛海,巧蘭娜,琵琶,卡卡,喜悅,麥莉,琥珀,羅娜,德力,蕾西,復古,法朵,卡羅,卡巴,j268</td>
+</tr>
+<tr>
+<td>4F 倉庫</td>
+<td>2</td>
+<td>卡西米段染,艾瑞拉,歐若拉,時光,珈瑪,安娜,vvg</td>
+</tr>
+<tr>
+<td>4F 倉庫</td>
+<td>3</td>
+<td>段染美麗諾(dmc),可莉塔,棒棒糖,大轉轉,轉轉</td>
+</tr>
+<tr>
+<td>4F 倉庫</td>
+<td>4</td>
+<td>美麗諾160,寶貝段染,菲力斯,芭蕾,樂菲,泰瑞,純淨</td>
+</tr>
+<tr>
+<td>4F 倉庫</td>
+<td>5</td>
+<td>蛋糕(段染),蛋糕(金蔥),潔妮,甜心,泰迪</td>
+</tr>
+<tr>
+<td>4F 倉庫</td>
+<td>6</td>
+<td>空氣(dmc),艾思妮,柏金,蕾西,尼兒,挪威</td>
+</tr>
+<tr>
+<td>4F 倉庫</td>
+<td>7</td>
+<td>交響曲,雪花,德力,琥珀</td>
+</tr>
+<tr>
+<td>4F 倉庫</td>
+<td>8</td>
+<td>大雪尼,茉莉,女神,悠瑪</td>
+</tr>
+<tr>
+<td>4F 倉庫</td>
+<td>9</td>
+<td>珍珠卡西米,巴樂羽毛,卡蜜兒,復古,鑽石</td>
+</tr>
+<tr>
+<td>4F 倉庫</td>
+<td>10</td>
+<td>巴黎寶貝,貝露,魅影</td>
+</tr>
+<tr>
+<td>4F 倉庫</td>
+<td>11</td>
+<td>卡蕾多,仙朵,雪克,海洋,安泰,格紋</td>
+</tr>
+<tr>
+<td>4F 倉庫</td>
+<td>12</td>
+<td>空氣段染,活力羽毛,紐薇拉,艾美,極品,羅娜,卡克</td>
+</tr>
+<tr>
+<td>4F 倉庫</td>
+<td>13</td>
+<td>美麗諾105,娜拉,卡拉,麗莎,卡斯,喬治</td>
+</tr>
+<tr>
+<td>4F 倉庫</td>
+<td>14</td>
+<td>雅樂,路比,蕾娜,狂熱,魔幻</td>
+</tr>
+<tr>
+<td>4F 倉庫</td>
+<td>15</td>
+<td>芙蓉圈圈紗,段染美麗諾,蘭妮,(o)angle羽毛,雲朵(德),奧地利,鄉村(素)</td>
+</tr>
+<tr>
+<td>4F 倉庫</td>
+<td>16</td>
+<td>美可,卡巴,艾瑞拉,碧絲,達芬妮,威尼斯</td>
+</tr>
+<tr>
+<td>4F 倉庫</td>
+<td>17</td>
+<td>1584</td>
+</tr>
+<tr>
+<td>4F 倉庫</td>
+<td>18</td>
+<td>工具雜物,手把,織布機</td>
+</tr>
+<tr>
+<td>4F 倉庫</td>
+<td>19</td>
+<td>12/0 松野珠,11/0 松野珠</td>
+</tr>
+<tr>
+<td>4F 倉庫</td>
+<td>20</td>
+<td>8/0 松野珠,15/0 松野珠</td>
+</tr>
+<tr>
+<td>4F 倉庫</td>
+<td>21</td>
+<td>821</td>
+</tr>
+<tr>
+<td>4F 倉庫</td>
+<td>22</td>
+<td>no.66,no.32,波浪貓</td>
+</tr>
+<tr>
+<td>4F 倉庫</td>
+<td>23</td>
+<td>802,芭雅</td>
+</tr>
+<tr>
+<td>4F 倉庫</td>
+<td>24</td>
+<td>no.25極太,冰風暴</td>
+</tr>
+<tr>
+<td>4F 倉庫</td>
+<td>25</td>
+<td>no.25並太,安提,金牌</td>
+</tr>
+<tr>
+<td>4F 倉庫</td>
+<td>26</td>
+<td>米露,娜娜</td>
+</tr>
+<tr>
+<td>4F 倉庫</td>
+<td>27</td>
+<td>可莉克,蘇菲</td>
+</tr>
+<tr>
+<td>4F 倉庫</td>
+<td>28</td>
+<td>大波浪,鄉村(段)</td>
+</tr>
+<tr>
+<td>4F 倉庫</td>
+<td>29</td>
+<td>謎語</td>
+</tr>
+<tr>
+<td>4F 倉庫</td>
+<td>30</td>
+<td>仙境(素),仙境(段)</td>
+</tr>
+<tr>
+<td>4F 倉庫</td>
+<td>31</td>
+<td>貓</td>
+</tr>
+<tr>
+<td>4F 倉庫</td>
+<td>32</td>
+<td>貓</td>
+</tr>
+<tr>
+<td>4F 倉庫</td>
+<td>33</td>
+<td>琪娜</td>
+</tr>
+<tr>
+<td>4F 倉庫</td>
+<td>34</td>
+<td>1283,珍妮,愛麗絲</td>
+</tr>
+<tr>
+<td>5F 倉庫</td>
+<td>5f</td>
+<td>熊貓,微笑,薩克,sp卡西米,百分百卡西米,澳洲金蔥,花妮,sundy,德斯,澳洲粗毛線,澳洲羽毛,東海材料包米蘭,特級段染,帕妃,金票801(100g),(p)208,(p)209</td>
+</tr>
+<tr>
+<td>6F 倉庫</td>
+<td>6f</td>
+<td>挽套,米諾,瑪莎,妮可,卡士達,舒卡,帽網(瑕疵),熱情,巴洛,1549,表白,2050,故鄉,4348,澳洲美麗諾,no 304,1795,凱蒂紗,艾薇兒,1495,ha羽毛紗,雅克</td>
+</tr>
+<tr>
+<td>外倉5F</td>
+<td>1</td>
+<td>鄉村段染,卡拉,時光,米娜,手搖機,德國金屬勾針,泰瑞,魔幻,卡士達</td>
+</tr>
+<tr>
+<td>外倉5F</td>
+<td>2</td>
+<td>雅克,活力,肯特,卡士達,極品,芭比,雪克,泰迪,路比,歐若拉,女神,麗莎,卡司,艾薇諾,雲朵</td>
+</tr>
+<tr>
+<td>外倉5F</td>
+<td>3</td>
+<td>故鄉,娜拉,妮可,楓葉,巧蘭娜,雅樂毛海,芙蓉</td>
+</tr>
+<tr>
+<td>外倉5F</td>
+<td>4</td>
+<td>故鄉,卡雷多,巧蘭娜,波波,麗仕,娜拉,卡克</td>
+</tr>
+<tr>
+<td>外倉5F</td>
+<td>5</td>
+<td>法雅,交響曲,瑪可,義大利亮彩紗,天使羽毛,彩虹</td>
+</tr>
+<tr>
+<td>外倉5F</td>
+<td>6</td>
+<td>可莉塔,碧玉,卡西米段染,安娜,蘭妮,仙絲,吉米</td>
+</tr>
+<tr>
+<td>外倉5F小</td>
+<td>1</td>
+<td>哈士奇,1036,(o)艾莉絲,(o)艾利,瑪露妮,帝寶,紐薇拉,宮廷,格蘭</td>
+</tr>
+<tr>
+<td>外倉5F小</td>
+<td>2</td>
+<td>1010,1046,雪兒,寶庫</td>
+</tr>
+<tr>
+<td>外倉5F小</td>
+<td>3</td>
+<td>4334,1851,1049,1052</td>
+</tr>
+<tr>
+<td>外倉5F小</td>
+<td>4</td>
+<td>1021,1781,1087,4345,樂福,皇冠</td>
+</tr>
+<tr>
+<td>外倉5F小</td>
+<td>5</td>
+<td>1784,4357,時尚</td>
+</tr>
+<tr>
+<td>外倉5F小</td>
+<td>6</td>
+<td>4348,1084,1791,1772,(o)angle</td>
+</tr>
+<tr>
+<td>外倉5F小</td>
+<td>7</td>
+<td>1090,1089,1039,1788</td>
+</tr>
+<tr>
+<td>外倉5F小</td>
+<td>8</td>
+<td>1088,1081,4344,4362,4365,4296</td>
+</tr>
+<tr>
+<td>外倉5F小</td>
+<td>9</td>
+<td>4361,1083,1037,1046,法朵,小時夜雨</td>
+</tr>
+<tr>
+<td>外倉5F小</td>
+<td>10</td>
+<td>4349,1053,4364,vvg,柔伊夏紗</td>
+</tr>
+<tr>
+<td>外倉5F小</td>
+<td>11</td>
+<td>凜,蜜雪兒,席娜,哈吉,1035,1007,1047</td>
+</tr>
+<tr>
+<td>外倉5F小</td>
+<td>12</td>
+<td>1009,戀戀,絲柔</td>
+</tr>
+<tr>
+<td>外倉5F小</td>
+<td>13</td>
+<td>(o)埃及,emmy段染,諾維亞,莉莉,帕柔,芭蕾,4313,1096,1286,tv106</td>
+</tr>
+<tr>
+<td>外倉6F</td>
+<td>1</td>
+<td>魅影, 巴黎寶貝</td>
+</tr>
+<tr>
+<td>外倉6F</td>
+<td>2</td>
+<td>莎曼紗, 卡羅, 加瑪, 卡蜜兒, tutti, 琵琶, 海洋</td>
+</tr>
+<tr>
+<td>外倉6F</td>
+<td>3</td>
+<td>莫內, 琵琶, tutti, 黛夢, 碧絲</td>
+</tr>
+<tr>
+<td>外倉6F</td>
+<td>4</td>
+<td>no25極太, 棒棒糖, 菲莉絲</td>
+</tr>
+<tr>
+<td>外倉6F</td>
+<td>5</td>
+<td>no209, 珍珠卡西米, no202, no11</td>
+</tr>
+<tr>
+<td>外倉6F</td>
+<td>6</td>
+<td>寶貝段染, 羅娜, 布條線(t血綿), 仙朵, 挪威, 琥珀, 美麗諾160, 鑽石, 喬治, 雪花, 潔妮, 艾美, 蕾娜</td>
+</tr>
+<tr>
+<td>外倉6F</td>
+<td>7</td>
+<td>珍妮, 凱蒂紗, 復古, 艾思妮, 1761, 熱情, 蘇菲</td>
+</tr>
+<tr>
+<td>外倉6F</td>
+<td>8</td>
+<td>德力, (o)絲光紗, 巴樂, 肯特, 葛瑞絲, 1073, 9360, 9370, no206</td>
+</tr>
+<tr>
+<td>外倉6F</td>
+<td>9</td>
+<td>1013, no304, no3, 安提</td>
+</tr>
+<tr>
+<td>外倉6F</td>
+<td>10</td>
+<td>no201, no14, 尼兒, 凌波, 表白, 悠瑪</td>
+</tr>
+<tr>
+<td>外倉7F</td>
+<td>1</td>
+<td>(dmc)星河, (dmc)閃亮, (dmc)空氣, (dmc)茱麗葉, (dmc)蛋糕, (dmc)拇指線, 大波浪(c), 雲朵卡西米, 蕾西, 2050, 1073, 1070, no3, no66, 茉莉, 麥莉</td>
+</tr>
+<tr>
+<td>外倉7F</td>
+<td>2</td>
+<td>貝露, 法821, 轉轉, 甜心, 大轉轉, 段染美麗諾, 娜娜</td>
+</tr>
+<tr>
+<td>外倉7F</td>
+<td>3</td>
+<td>大波浪(v), 金牌, 802(胖胖紗), 琪娜, eko</td>
+</tr>
+<tr>
+<td>外倉7F</td>
+<td>4</td>
+<td>娜娜</td>
+</tr>
+<tr>
+<td>外倉7F</td>
+<td>5</td>
+<td>娜娜</td>
+</tr>
+<tr>
+<td>外倉7F</td>
+<td>6</td>
+<td>澳洲粗毛海, 活力紙線</td>
+</tr>
+<tr>
+<td>外倉7F</td>
+<td>7</td>
+<td>芭雅</td>
+</tr>
+<tr>
+<td>外倉7F</td>
+<td>8</td>
+<td>芭雅</td>
+</tr>
+<tr>
+<td>外倉7F</td>
+<td>9</td>
+<td>米露, 馬毛海, 澳洲羽毛紗</td>
+</tr>
+<tr>
+<td>外倉7F</td>
+<td>10</td>
+<td>澳洲羽毛紗, 花毛海, 馬毛海</td>
+</tr>
+<tr>
+<td>外倉7F</td>
+<td>11</td>
+<td>謎語</td>
+</tr>
+<tr>
+<td>外倉7F</td>
+<td>12</td>
+<td>冰風暴, no411, 澳洲美麗諾</td>
+</tr>
+<tr>
+<td>外倉7F</td>
+<td>13</td>
+<td>冰風暴</td>
+</tr>
+<tr>
+<td>外倉7F</td>
+<td>14</td>
+<td>貓</td>
+</tr>
+<tr>
+<td>外倉7F</td>
+<td>15</td>
+<td>艾瑞拉, no410, no27, 安泰</td>
+</tr>
+<tr>
+<td>外倉7F</td>
+<td>16</td>
+<td>空氣段染, 17, 空氣段染, 汗可, 1264</td>
+</tr>
+<tr>
+<td>外倉7F</td>
+<td>18</td>
+<td>橫濱, 爪哇</td>
+</tr>
+<tr>
+<td>外倉7F</td>
+<td>19</td>
+<td>貝瑞, 家園</td>
+</tr>
+<tr>
+<td>外倉7F</td>
+<td>20</td>
+<td>格紋</td>
+</tr>
+<tr>
+<td>外倉7F</td>
+<td>21</td>
+<td>杜思</td>
+</tr>
+<tr>
+<td>外倉7F</td>
+<td>22</td>
+<td>巴洛</td>
+</tr>
+<tr>
+<td>外倉7F</td>
+<td>23</td>
+<td>巴洛, 德國羽毛, 貝瑞珍珠花線</td>
+</tr>
+<tr>
+<td>外倉7F</td>
+<td>24</td>
+<td>義美麗諾</td>
+</tr>
+<tr>
+<td>外倉7F</td>
+<td>25</td>
+<td>澳雅(澳洲雅樂), 河岸, no411</td>
+</tr>
+<tr>
+<td>外倉7F</td>
+<td>26</td>
+<td>米諾, 義美麗諾</td>
+</tr>
+<tr>
+<td>外倉7F</td>
+<td>27</td>
+<td>1591</td>
+</tr>
+</tbody>
 </table>
+<script>
+        const searchInput = document.getElementById("searchInput");
+        const table = document.getElementById("data-table");
+        const tableBody = document.getElementById("table-body");
+        const originalRows = Array.from(tableBody.rows);
+        const originalTexts = originalRows.map(row =>
+            Array.from(row.cells).map(cell => cell.innerText)
+        );
+
+        // 搜尋功能（紅字高亮）
+        searchInput.addEventListener("input", function () {
+            const keyword = searchInput.value.trim().toLowerCase();
+            originalRows.forEach((row, i) => {
+                const rowText = originalTexts[i].join(" ").toLowerCase();
+                const isMatch = rowText.includes(keyword);
+                row.style.display = isMatch ? "" : "none";
+
+                Array.from(row.cells).forEach((cell, j) => {
+                    const original = originalTexts[i][j];
+                    if (keyword && isMatch) {
+                        const regex = new RegExp("(" + keyword + ")", "gi");
+                        cell.innerHTML = original.replace(regex, "<mark>$1</mark>");
+                    } else {
+                        cell.innerHTML = original;
+                    }
+                });
+            });
+        });
+
+        // 排序功能
+        const headers = table.querySelectorAll("th");
+        headers.forEach((header, index) => {
+            let asc = true;
+            header.addEventListener("click", () => {
+                const rows = Array.from(tableBody.rows).filter(row => row.style.display !== "none");
+                rows.sort((a, b) => {
+                    const aText = a.cells[index].innerText;
+                    const bText = b.cells[index].innerText;
+                    const aNum = parseFloat(aText);
+                    const bNum = parseFloat(bText);
+                    const isNumeric = !isNaN(aNum) && !isNaN(bNum);
+                    if (isNumeric) {
+                        return asc ? aNum - bNum : bNum - aNum;
+                    } else {
+                        return asc ? aText.localeCompare(bText, 'zh') : bText.localeCompare(aText, 'zh');
+                    }
+                });
+                asc = !asc;
+                rows.forEach(row => tableBody.appendChild(row));
+            });
+        });
+    </script>
 </body>
 </html>
