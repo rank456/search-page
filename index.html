@@ -4,42 +4,21 @@
 <head>
   <meta charset="UTF-8">
   <title>搜尋總表</title>
+  <link rel="manifest" href="manifest.json">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
     body { font-family: Arial, sans-serif; padding: 20px; }
     input[type="text"] { 
-      width: 100%; 
-      padding: 15px; 
-      margin-bottom: 20px; 
-      font-size: 20px; 
-      border: 2px solid #007bff; 
-      border-radius: 8px; 
-      background-color: #f0f8ff; 
+      width: 100%; padding: 15px; margin-bottom: 20px; font-size: 20px; 
+      border: 2px solid #007bff; border-radius: 8px; background-color: #f0f8ff; 
       transition: border-color 0.3s ease; 
     }
-    input[type="text"]:focus {
-      border-color: #0056b3; 
-      outline: none; 
-    }
-    table { 
-      border-collapse: collapse; 
-      width: 100%; 
-    }
-    th, td { 
-      border: 1px solid #ccc; 
-      padding: 8px; 
-      text-align: center; 
-    }
-    th { 
-      background-color: #f2f2f2; 
-    }
-    tr:hover { 
-      background-color: #f9f9f9; 
-    }
-    mark { 
-      background-color: transparent; 
-      color: red; 
-      font-weight: bold; 
-    }
+    input[type="text"]:focus { border-color: #0056b3; outline: none; }
+    table { border-collapse: collapse; width: 100%; }
+    th, td { border: 1px solid #ccc; padding: 8px; text-align: center; }
+    th { background-color: #f2f2f2; }
+    tr:hover { background-color: #f9f9f9; }
+    mark { background-color: transparent; color: red; font-weight: bold; }
   </style>
 </head>
 <body>
@@ -70,6 +49,11 @@
         });
       });
     });
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('service-worker.js').then(r => console.log('Service worker registered')).catch(console.error);
+      });
+    }
   </script>
 </body>
 </html>
