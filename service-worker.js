@@ -1,7 +1,9 @@
 // 更新於 2025-04-13，觸發快取刷新
+const CACHE_NAME = 'excel-search-cache';
+
 self.addEventListener('install', function(event) {
   event.waitUntil(
-    caches.open('excel-search-cache').then(function(cache) {
+    caches.open(CACHE_NAME).then(function(cache) {
       return cache.addAll([
         './',
         './index.html',
@@ -10,6 +12,22 @@ self.addEventListener('install', function(event) {
     })
   );
 });
+
+self.addEventListener('activate', function(event) {
+  const cacheWhitelist = [CACHE_NAME];
+  event.waitUntil(
+    caches.keys().then(function(cacheNames) {
+      return Promise.all(
+        cacheNames.map(function(cacheName) {
+          if (!cacheWhitelist.includes(cacheName)) {
+            return caches.delete(cacheName);
+          }
+        })
+      );
+    })
+  );
+});
+
 self.addEventListener('fetch', function(event) {
   event.respondWith(
     caches.match(event.request).then(function(response) {
