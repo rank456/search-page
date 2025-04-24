@@ -1,4 +1,4 @@
-// 更新於 2025-04-13，觸發快取刷新
+// 更新於 2025-04-25，觸發快取刷新
 const CACHE_NAME = 'excel-search-cache';
 
 self.addEventListener('install', function(event) {
