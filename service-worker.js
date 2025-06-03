@@ -2,6 +2,7 @@
 const CACHE_NAME = 'excel-search-cache-v2';
 
 self.addEventListener('install', function(event) {
+self.skipWaiting();
   event.waitUntil(
     caches.open(CACHE_NAME).then(function(cache) {
       return cache.addAll([
