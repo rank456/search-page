@@ -1,5 +1,5 @@
 // 更新於 2025-04-25，觸發快取刷新
-const CACHE_NAME = 'excel-search-cache-v4';
+const CACHE_NAME = 'excel-search-cache-v5';
 
 self.addEventListener('install', function(event) {
 self.skipWaiting();
