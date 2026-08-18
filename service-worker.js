@@ -1,38 +1,61 @@
-// 更新於 2025-04-25，觸發快取刷新
-const CACHE_NAME = 'excel-search-cache-v7';
+const CACHE_NAME = 'search-tool-cache-v8';
+const APP_SHELL = [
+  './',
+  './index.html',
+  './data.json',
+  './manifest.json',
+  './icon-192.png',
+  './icon-512.png'
+];
 
-self.addEventListener('install', function(event) {
-self.skipWaiting();
+self.addEventListener('install', event => {
+  self.skipWaiting();
+  event.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(APP_SHELL)));
+});
+
+self.addEventListener('activate', event => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then(function(cache) {
-      return cache.addAll([
-        './',
-        './index.html',
-        './manifest.json'
-      ]);
-    })
+    caches.keys()
+      .then(names => Promise.all(names.filter(name => name !== CACHE_NAME).map(name => caches.delete(name))))
+      .then(() => self.clients.claim())
   );
 });
 
-self.addEventListener('activate', function(event) {
-  const cacheWhitelist = [CACHE_NAME];
-  event.waitUntil(
-    caches.keys().then(function(cacheNames) {
-      return Promise.all(
-        cacheNames.map(function(cacheName) {
-          if (!cacheWhitelist.includes(cacheName)) {
-            return caches.delete(cacheName);
-          }
-        })
-      );
-    })
-  );
-});
+async function networkFirst(request) {
+  const cache = await caches.open(CACHE_NAME);
+  try {
+    const response = await fetch(request, { cache: 'no-store' });
+    if (response && response.ok) cache.put(request, response.clone());
+    return response;
+  } catch (error) {
+    const cached = await cache.match(request);
+    if (cached) return cached;
+    throw error;
+  }
+}
 
-self.addEventListener('fetch', function(event) {
+self.addEventListener('fetch', event => {
+  if (event.request.method !== 'GET') return;
+  const url = new URL(event.request.url);
+  if (url.origin !== self.location.origin) return;
+
+  if (url.pathname.endsWith('/data.json')) {
+    event.respondWith(networkFirst(event.request));
+    return;
+  }
+
+  if (event.request.mode === 'navigate') {
+    event.respondWith(networkFirst(event.request).catch(() => caches.match('./index.html')));
+    return;
+  }
+
   event.respondWith(
-    caches.match(event.request).then(function(response) {
-      return response || fetch(event.request);
-    })
+    caches.match(event.request).then(cached => cached || fetch(event.request).then(response => {
+      if (response && response.ok) {
+        const copy = response.clone();
+        caches.open(CACHE_NAME).then(cache => cache.put(event.request, copy));
+      }
+      return response;
+    }))
   );
 });
