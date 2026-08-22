@@ -40,6 +40,17 @@
     const statusEl = document.getElementById('status');
     let records = [];
 
+    function loadPinyinHelper() {
+      const script = document.createElement('script');
+      script.src = 'https://cdn.jsdelivr.net/npm/pinyin-pro@3.28.1/dist/index.min.js';
+      script.async = true;
+      script.onload = () => {
+        if (searchInput.value.trim()) render();
+      };
+      script.onerror = () => console.warn('拼音搜尋輔助載入失敗，改用本機近似搜尋。');
+      document.head.appendChild(script);
+    }
+
     function appendHighlighted(cell, text, keyword) {
       cell.textContent = '';
       if (!keyword) {
@@ -60,22 +71,163 @@
       cell.append(document.createTextNode(text.slice(start)));
     }
 
+    function containsChinese(text) {
+      return /[\u3400-\u9fff]/.test(text);
+    }
+
+    function toPlainPinyin(text) {
+      if (!window.pinyinPro || typeof window.pinyinPro.pinyin !== 'function') return '';
+      try {
+        return window.pinyinPro.pinyin(text, {
+          toneType: 'none',
+          removeNonZh: true
+        }).replace(/\s+/g, '').toLowerCase();
+      } catch (error) {
+        return '';
+      }
+    }
+
+    function normalizeFuzzy(text) {
+      return String(text)
+        .normalize('NFKC')
+        .toLowerCase()
+        .replace(/[^\u3400-\u9fffa-z0-9]/g, '');
+    }
+
+    function levenshtein(a, b) {
+      if (a === b) return 0;
+      if (!a.length) return b.length;
+      if (!b.length) return a.length;
+
+      let previous = Array.from({ length: b.length + 1 }, (_, i) => i);
+      let current = new Array(b.length + 1);
+
+      for (let i = 1; i <= a.length; i++) {
+        current[0] = i;
+        for (let j = 1; j <= b.length; j++) {
+          const cost = a[i - 1] === b[j - 1] ? 0 : 1;
+          current[j] = Math.min(
+            previous[j] + 1,
+            current[j - 1] + 1,
+            previous[j - 1] + cost
+          );
+        }
+        [previous, current] = [current, previous];
+      }
+      return previous[b.length];
+    }
+
+    function fuzzySegmentMatches(segment, keyword) {
+      const query = normalizeFuzzy(keyword);
+      const target = normalizeFuzzy(segment);
+
+      if (!containsChinese(keyword) || query.length < 2 || target.length < 2) return false;
+
+      const maxDistance = query.length >= 5 ? 2 : 1;
+
+      if (target.length < query.length) {
+        return levenshtein(target, query) <= maxDistance;
+      }
+
+      for (let i = 0; i <= target.length - query.length; i++) {
+        const windowText = target.slice(i, i + query.length);
+        if (levenshtein(windowText, query) <= maxDistance) return true;
+      }
+      return false;
+    }
+
+    function smartSegmentMatches(segment, keyword) {
+      if (!keyword || keyword.length < 2 || !containsChinese(keyword)) return false;
+
+      const lowerSegment = segment.toLowerCase();
+      const lowerKeyword = keyword.toLowerCase();
+      if (lowerSegment.includes(lowerKeyword)) return true;
+
+      const keywordPinyin = toPlainPinyin(keyword);
+      const segmentPinyin = toPlainPinyin(segment);
+      if (keywordPinyin && segmentPinyin && segmentPinyin.includes(keywordPinyin)) return true;
+
+      return fuzzySegmentMatches(segment, keyword);
+    }
+
+    function contentHasSmartMatch(contents, keyword) {
+      return contents.split(/[,，]/).some(part => smartSegmentMatches(part.trim(), keyword));
+    }
+
+    function appendSmartHighlighted(cell, text, keyword) {
+      cell.textContent = '';
+      const parts = text.split(/([,，])/);
+
+      for (const part of parts) {
+        if (part === ',' || part === '，') {
+          cell.append(document.createTextNode(part));
+          continue;
+        }
+
+        if (!smartSegmentMatches(part.trim(), keyword)) {
+          cell.append(document.createTextNode(part));
+          continue;
+        }
+
+        const leading = (part.match(/^\s*/) || [''])[0];
+        const trailing = (part.match(/\s*$/) || [''])[0];
+        const coreEnd = part.length - trailing.length;
+        const core = part.slice(leading.length, coreEnd);
+
+        cell.append(document.createTextNode(leading));
+        if (core) {
+          const mark = document.createElement('mark');
+          mark.textContent = core;
+          cell.append(mark);
+        }
+        cell.append(document.createTextNode(trailing));
+      }
+    }
+
     function render() {
       const keyword = searchInput.value.trim();
       const lowerKeyword = keyword.toLowerCase();
       const fragment = document.createDocumentFragment();
+      const exactMatchIndexes = new Set();
 
-      for (const record of records) {
-        const values = [record.floor, record.cabinet, record.contents];
-        if (lowerKeyword && !values.join(' ').toLowerCase().includes(lowerKeyword)) continue;
-        const tr = document.createElement('tr');
-        for (const value of values) {
-          const td = document.createElement('td');
-          appendHighlighted(td, value, keyword);
-          tr.append(td);
-        }
-        fragment.append(tr);
+      if (lowerKeyword) {
+        records.forEach((record, index) => {
+          const values = [record.floor, record.cabinet, record.contents];
+          if (values.join(' ').toLowerCase().includes(lowerKeyword)) {
+            exactMatchIndexes.add(index);
+          }
+        });
       }
+
+      const hasExactMatches = exactMatchIndexes.size > 0;
+
+      records.forEach((record, index) => {
+        const values = [record.floor, record.cabinet, record.contents];
+        let useSmartHighlight = false;
+
+        if (lowerKeyword) {
+          if (hasExactMatches) {
+            if (!exactMatchIndexes.has(index)) return;
+          } else {
+            if (!contentHasSmartMatch(record.contents, keyword)) return;
+            useSmartHighlight = true;
+          }
+        }
+
+        const tr = document.createElement('tr');
+
+        values.forEach((value, valueIndex) => {
+          const td = document.createElement('td');
+          if (useSmartHighlight && valueIndex === 2) {
+            appendSmartHighlighted(td, value, keyword);
+          } else {
+            appendHighlighted(td, value, keyword);
+          }
+          tr.append(td);
+        });
+
+        fragment.append(tr);
+      });
 
       tableBody.replaceChildren(fragment);
     }
@@ -94,6 +246,7 @@
     }
 
     searchInput.addEventListener('input', render);
+    loadPinyinHelper();
     loadData();
 
     if ('serviceWorker' in navigator) {
