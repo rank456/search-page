@@ -36,6 +36,8 @@
     th:nth-child(2), td:nth-child(2) { width: 22%; }
     th:nth-child(3), td:nth-child(3) { width: 60%; }
     td:nth-child(1) {
+      padding-left: 4px;
+      padding-right: 4px;
       font-size: 15.5px;
       font-weight: 700;
       line-height: 1.35;
@@ -111,6 +113,25 @@
         start = pos + keyword.length;
       }
       cell.append(document.createTextNode(text.slice(start)));
+    }
+
+    function appendFloorHighlighted(cell, text, keyword) {
+      const match = String(text).match(/^(\d+F)\s*(.+)$/i);
+      if (!match) {
+        appendHighlighted(cell, text, keyword);
+        return;
+      }
+
+      cell.textContent = '';
+      const floorPart = document.createElement('span');
+      const placePart = document.createElement('span');
+      appendHighlighted(floorPart, match[1], keyword);
+      appendHighlighted(placePart, match[2], keyword);
+      cell.append(floorPart, document.createElement('br'), placePart);
+    }
+
+    function formatPositionText(text) {
+      return String(text).replace(/\(/g, '（').replace(/\)/g, '）');
     }
 
     function containsChinese(text) {
@@ -260,7 +281,11 @@
 
         values.forEach((value, valueIndex) => {
           const td = document.createElement('td');
-          if (useSmartHighlight && valueIndex === 2) {
+          if (valueIndex === 0) {
+            appendFloorHighlighted(td, value, keyword);
+          } else if (valueIndex === 1) {
+            appendHighlighted(td, formatPositionText(value), keyword);
+          } else if (useSmartHighlight) {
             appendSmartHighlighted(td, value, keyword);
           } else {
             appendHighlighted(td, value, keyword);
