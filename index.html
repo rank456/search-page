@@ -15,9 +15,45 @@
       transition: border-color 0.3s ease;
     }
     input[type="text"]:focus { border-color: #0056b3; outline: none; }
-    table { border-collapse: collapse; width: 100%; }
-    th, td { border: 1px solid #ccc; padding: 8px; text-align: center; }
-    th { background-color: #f2f2f2; }
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      table-layout: fixed;
+      background-color: #fff;
+    }
+    th, td {
+      border: 1px solid #d9d9d9;
+      padding: 10px 8px;
+      vertical-align: middle;
+    }
+    th {
+      background-color: #f3f3f3;
+      font-size: 18px;
+      font-weight: 700;
+      text-align: center;
+    }
+    th:nth-child(1), td:nth-child(1) { width: 16%; }
+    th:nth-child(2), td:nth-child(2) { width: 20%; }
+    th:nth-child(3), td:nth-child(3) { width: 64%; }
+    td:nth-child(1) {
+      font-size: 16px;
+      font-weight: 700;
+      text-align: center;
+      word-break: keep-all;
+    }
+    td:nth-child(2) {
+      font-size: 16px;
+      font-weight: 600;
+      text-align: center;
+      word-break: keep-all;
+    }
+    td:nth-child(3) {
+      font-size: 15.5px;
+      line-height: 1.55;
+      text-align: left;
+      word-break: break-word;
+      overflow-wrap: anywhere;
+    }
     tr:hover { background-color: #f9f9f9; }
     mark { background-color: transparent; color: red; font-weight: bold; }
     #status { margin: 8px 0 16px; color: #666; display: none; }
@@ -29,7 +65,7 @@
   <input type="text" id="searchInput" placeholder="請輸入關鍵字" autocomplete="off">
   <div id="status"></div>
   <table id="data-table">
-    <thead><tr><th>樓層</th><th>櫃子編號</th><th>內容物</th></tr></thead>
+    <thead><tr><th>樓層</th><th>位置</th><th>內容物</th></tr></thead>
     <tbody></tbody>
   </table>
   <div id="versionInfo">版本 2.0｜資料更新：2026-08-25</div>
