@@ -115,23 +115,49 @@
       cell.append(document.createTextNode(text.slice(start)));
     }
 
+    function appendTwoLinesHighlighted(cell, firstLine, secondLine, keyword) {
+      cell.textContent = '';
+      const firstPart = document.createElement('span');
+      const secondPart = document.createElement('span');
+      appendHighlighted(firstPart, firstLine, keyword);
+      appendHighlighted(secondPart, secondLine, keyword);
+      cell.append(firstPart, document.createElement('br'), secondPart);
+    }
+
     function appendFloorHighlighted(cell, text, keyword) {
-      const match = String(text).match(/^(\d+F)\s*(.+)$/i);
-      if (!match) {
-        appendHighlighted(cell, text, keyword);
+      const value = String(text).trim();
+
+      if (value.startsWith('外倉')) {
+        const floorPart = value.slice(2).trim();
+        if (floorPart) {
+          appendTwoLinesHighlighted(cell, '外倉', floorPart, keyword);
+          return;
+        }
+      }
+
+      const match = value.match(/^(\d+F)\s*(.+)$/i);
+      if (match) {
+        appendTwoLinesHighlighted(cell, match[1], match[2], keyword);
         return;
       }
 
-      cell.textContent = '';
-      const floorPart = document.createElement('span');
-      const placePart = document.createElement('span');
-      appendHighlighted(floorPart, match[1], keyword);
-      appendHighlighted(placePart, match[2], keyword);
-      cell.append(floorPart, document.createElement('br'), placePart);
+      appendHighlighted(cell, value, keyword);
     }
 
     function formatPositionText(text) {
       return String(text).replace(/\(/g, '（').replace(/\)/g, '）');
+    }
+
+    function appendPositionHighlighted(cell, text, keyword) {
+      const value = formatPositionText(text).trim();
+      const match = value.match(/^(.+?)(（.+）)$/);
+
+      if (match) {
+        appendTwoLinesHighlighted(cell, match[1].trim(), match[2].trim(), keyword);
+        return;
+      }
+
+      appendHighlighted(cell, value, keyword);
     }
 
     function containsChinese(text) {
@@ -284,7 +310,7 @@
           if (valueIndex === 0) {
             appendFloorHighlighted(td, value, keyword);
           } else if (valueIndex === 1) {
-            appendHighlighted(td, formatPositionText(value), keyword);
+            appendPositionHighlighted(td, value, keyword);
           } else if (useSmartHighlight) {
             appendSmartHighlighted(td, value, keyword);
           } else {
