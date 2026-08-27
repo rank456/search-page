@@ -33,8 +33,8 @@
       text-align: center;
     }
     th:nth-child(1), td:nth-child(1) { width: 18%; }
-    th:nth-child(2), td:nth-child(2) { width: 22%; }
-    th:nth-child(3), td:nth-child(3) { width: 60%; }
+    th:nth-child(2), td:nth-child(2) { width: 24%; }
+    th:nth-child(3), td:nth-child(3) { width: 58%; }
     td:nth-child(1) {
       padding-left: 4px;
       padding-right: 4px;
@@ -47,13 +47,15 @@
       overflow-wrap: anywhere;
     }
     td:nth-child(2) {
-      font-size: 16px;
+      padding-left: 4px;
+      padding-right: 4px;
+      font-size: 15px;
       font-weight: 600;
-      line-height: 1.4;
+      line-height: 1.25;
       text-align: center;
       white-space: normal;
       word-break: normal;
-      overflow-wrap: anywhere;
+      overflow-wrap: normal;
     }
     td:nth-child(3) {
       font-size: 15.5px;
@@ -61,6 +63,19 @@
       text-align: left;
       word-break: break-word;
       overflow-wrap: anywhere;
+    }
+    .two-line {
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2px;
+      width: 100%;
+      text-align: center;
+    }
+    .two-line > span {
+      display: block;
+      white-space: nowrap;
     }
     tr:hover { background-color: #f9f9f9; }
     mark { background-color: transparent; color: red; font-weight: bold; }
@@ -117,11 +132,14 @@
 
     function appendTwoLinesHighlighted(cell, firstLine, secondLine, keyword) {
       cell.textContent = '';
+      const wrapper = document.createElement('span');
+      wrapper.className = 'two-line';
       const firstPart = document.createElement('span');
       const secondPart = document.createElement('span');
       appendHighlighted(firstPart, firstLine, keyword);
       appendHighlighted(secondPart, secondLine, keyword);
-      cell.append(firstPart, document.createElement('br'), secondPart);
+      wrapper.append(firstPart, secondPart);
+      cell.append(wrapper);
     }
 
     function appendFloorHighlighted(cell, text, keyword) {
@@ -150,7 +168,7 @@
 
     function appendPositionHighlighted(cell, text, keyword) {
       const value = formatPositionText(text).trim();
-      const match = value.match(/^(.+?)(（.+）)$/);
+      const match = value.match(/^([^（]+)(（.+）)$/);
 
       if (match) {
         appendTwoLinesHighlighted(cell, match[1].trim(), match[2].trim(), keyword);
@@ -273,6 +291,61 @@
       }
     }
 
+    function getFloorOrderMap(data) {
+      const map = new Map();
+      data.forEach(record => {
+        const key = String(record.floor);
+        if (!map.has(key)) map.set(key, map.size);
+      });
+      return map;
+    }
+
+    function getCabinetMeta(text) {
+      const value = formatPositionText(text).replace(/\s+/g, '').trim();
+      const basic = value.match(/^(前|中|後)（.+）$/);
+      if (basic) {
+        return { type: 'named', group: '', rank: { '前': 0, '中': 1, '後': 2 }[basic[1]] };
+      }
+
+      const corridor = value.match(/^(走廊)（(前|中|後)）$/);
+      if (corridor) {
+        return { type: 'named', group: corridor[1], rank: { '前': 0, '中': 1, '後': 2 }[corridor[2]] };
+      }
+
+      if (/^\d+$/.test(value)) {
+        return { type: 'number', group: '', rank: parseInt(value, 10) };
+      }
+
+      return { type: 'other', group: value, rank: 0 };
+    }
+
+    function sortRecords(data) {
+      const floorOrderMap = getFloorOrderMap(data);
+      return data
+        .map((record, index) => ({ ...record, _index: index }))
+        .sort((a, b) => {
+          const floorDiff = floorOrderMap.get(String(a.floor)) - floorOrderMap.get(String(b.floor));
+          if (floorDiff !== 0) return floorDiff;
+
+          const aMeta = getCabinetMeta(a.cabinet);
+          const bMeta = getCabinetMeta(b.cabinet);
+
+          if (aMeta.type === 'named' && bMeta.type === 'named') {
+            if (aMeta.group !== bMeta.group) {
+              return aMeta.group.localeCompare(bMeta.group, 'zh-Hant');
+            }
+            return aMeta.rank - bMeta.rank;
+          }
+
+          if (aMeta.type === 'number' && bMeta.type === 'number') {
+            return aMeta.rank - bMeta.rank;
+          }
+
+          return a._index - b._index;
+        })
+        .map(({ _index, ...record }) => record);
+    }
+
     function render() {
       const keyword = searchInput.value.trim();
       const lowerKeyword = keyword.toLowerCase();
@@ -329,7 +402,8 @@
       try {
         const response = await fetch('./data.json', { cache: 'no-store' });
         if (!response.ok) throw new Error('HTTP ' + response.status);
-        records = await response.json();
+        const data = await response.json();
+        records = sortRecords(data);
         render();
       } catch (error) {
         statusEl.style.display = 'block';
