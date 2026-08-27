@@ -178,6 +178,18 @@
       appendHighlighted(cell, value, keyword);
     }
 
+    function getDisplayCabinet(record) {
+      const floor = String(record.floor).replace(/\s+/g, '').toUpperCase();
+      const cabinet = String(record.cabinet).trim().toLowerCase();
+
+      if ((floor === '5F倉庫' && cabinet === '5f') ||
+          (floor === '6F倉庫' && cabinet === '6f')) {
+        return '整層';
+      }
+
+      return record.cabinet;
+    }
+
     function containsChinese(text) {
       return /[\u3400-\u9fff]/.test(text);
     }
@@ -354,7 +366,7 @@
 
       if (lowerKeyword) {
         records.forEach((record, index) => {
-          const values = [record.floor, record.cabinet, record.contents];
+          const values = [record.floor, getDisplayCabinet(record), record.contents];
           if (values.join(' ').toLowerCase().includes(lowerKeyword)) {
             exactMatchIndexes.add(index);
           }
@@ -364,7 +376,7 @@
       const hasExactMatches = exactMatchIndexes.size > 0;
 
       records.forEach((record, index) => {
-        const values = [record.floor, record.cabinet, record.contents];
+        const values = [record.floor, getDisplayCabinet(record), record.contents];
         let useSmartHighlight = false;
 
         if (lowerKeyword) {
