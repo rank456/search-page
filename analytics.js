@@ -3,8 +3,9 @@
 
   const ENDPOINT = 'https://script.google.com/macros/s/AKfycby1NCoFRael5KDBlI7qsDo6ETOBnaa8dl8BZcnQb-bYSY4TgCwbuxR-uS7scIxvpmIN/exec';
   const APP_VERSION = '2.0';
-  const SEARCH_DEBOUNCE_MS = 1000;
+  const SEARCH_DEBOUNCE_MS = 2200;
   const DUPLICATE_WINDOW_MS = 30000;
+  const PAGE_VIEW_DUPLICATE_MS = 10000;
 
   const input = document.getElementById('searchInput');
   const tableBody = document.querySelector('#data-table tbody');
@@ -56,6 +57,17 @@
         body
       }).catch(() => {});
     } catch (_) {}
+  }
+
+  function sendPageViewOnce() {
+    const key = 'searchToolLastPageViewAt';
+    const now = Date.now();
+    try {
+      const last = Number(sessionStorage.getItem(key) || 0);
+      if (now - last < PAGE_VIEW_DUPLICATE_MS) return;
+      sessionStorage.setItem(key, String(now));
+    } catch (_) {}
+    send({ event: 'page_view' });
   }
 
   function dataIsReady() {
@@ -115,8 +127,8 @@
   input.addEventListener('input', scheduleSearchRecord);
 
   if (document.readyState === 'complete') {
-    send({ event: 'page_view' });
+    sendPageViewOnce();
   } else {
-    window.addEventListener('load', () => send({ event: 'page_view' }), { once: true });
+    window.addEventListener('load', sendPageViewOnce, { once: true });
   }
 })();
