@@ -1,9 +1,10 @@
-const CACHE_NAME = 'search-tool-cache-v8';
+const CACHE_NAME = 'search-tool-cache-v9';
 const APP_SHELL = [
   './',
   './index.html',
   './data.json',
   './manifest.json',
+  './analytics.js',
   './icon-192.png',
   './icon-512.png'
 ];
