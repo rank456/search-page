@@ -1,10 +1,11 @@
-const CACHE_NAME = 'search-tool-cache-v11';
+const CACHE_NAME = 'search-tool-cache-v12';
 const APP_SHELL = [
   './',
   './index.html',
   './data.json',
   './manifest.json',
   './analytics.js',
+  './pinyin-pro-3.28.1.min.js',
   './icon-192.png',
   './icon-512.png'
 ];

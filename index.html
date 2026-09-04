@@ -107,7 +107,7 @@
 
     function loadPinyinHelper() {
       const script = document.createElement('script');
-      script.src = 'https://cdn.jsdelivr.net/npm/pinyin-pro@3.28.1/dist/index.min.js';
+      script.src = './pinyin-pro-3.28.1.min.js';
       script.async = true;
       script.onload = () => {
         if (searchInput.value.trim()) render();
