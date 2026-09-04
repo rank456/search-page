@@ -2,8 +2,8 @@
   'use strict';
 
   const ENDPOINT = 'https://script.google.com/macros/s/AKfycby1NCoFRael5KDBlI7qsDo6ETOBnaa8dl8BZcnQb-bYSY4TgCwbuxR-uS7scIxvpmIN/exec';
-  const APP_VERSION = '2.0';
-  const SEARCH_DEBOUNCE_MS = 2200;
+  const APP_VERSION = '2.1';
+  const SEARCH_DEBOUNCE_MS = 800;
   const DUPLICATE_WINDOW_MS = 30000;
   const PAGE_VIEW_DUPLICATE_MS = 10000;
 
@@ -125,6 +125,11 @@
   }
 
   input.addEventListener('input', scheduleSearchRecord);
+  input.addEventListener('change', recordSearch);
+  window.addEventListener('pagehide', () => {
+    clearTimeout(searchTimer);
+    recordSearch();
+  });
 
   if (document.readyState === 'complete') {
     sendPageViewOnce();

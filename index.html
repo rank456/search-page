@@ -97,7 +97,7 @@
     <thead><tr><th>樓層</th><th>位置</th><th>內容物</th></tr></thead>
     <tbody></tbody>
   </table>
-  <div id="versionInfo">版本 2.0｜資料更新：2026-08-25</div>
+  <div id="versionInfo">版本 2.1｜資料更新：2026-09-04</div>
 
   <script>
     const searchInput = document.getElementById('searchInput');
@@ -246,7 +246,9 @@
       const query = normalizeFuzzy(keyword);
       const target = normalizeFuzzy(segment);
 
-      if (!containsChinese(keyword) || query.length < 2 || target.length < 2) return false;
+      // 兩字詞若只差一字，傳統編輯距離會把大量無關名稱也判為相近。
+      // 兩字同音交給拼音比對；三字以上才使用保守的錯字容忍。
+      if (!containsChinese(keyword) || query.length < 3 || target.length < 2) return false;
 
       const maxDistance = query.length >= 5 ? 2 : 1;
 
