@@ -2,7 +2,7 @@
   'use strict';
 
   const ENDPOINT = 'https://script.google.com/macros/s/AKfycby1NCoFRael5KDBlI7qsDo6ETOBnaa8dl8BZcnQb-bYSY4TgCwbuxR-uS7scIxvpmIN/exec';
-  const APP_VERSION = '2.1';
+  const APP_VERSION = '2.2';
   const SEARCH_DEBOUNCE_MS = 800;
   const DUPLICATE_WINDOW_MS = 30000;
   const PAGE_VIEW_DUPLICATE_MS = 10000;
@@ -85,11 +85,16 @@
       return { resultCount: 0, matchType: '無結果' };
     }
 
-    const lowerTerm = term.toLowerCase();
-    const hasExact = rows.some(row => row.textContent.toLowerCase().includes(lowerTerm));
+    const terms = typeof window.searchToolGetTerms === 'function'
+      ? window.searchToolGetTerms(term)
+      : [term];
+    const allTermsHaveExactMatch = terms.every(searchTerm => {
+      const lowerTerm = searchTerm.toLowerCase();
+      return rows.some(row => row.textContent.toLowerCase().includes(lowerTerm));
+    });
     return {
       resultCount,
-      matchType: hasExact ? '精確' : '聰明'
+      matchType: allTermsHaveExactMatch ? '精確' : '聰明'
     };
   }
 

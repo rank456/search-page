@@ -1,4 +1,4 @@
-const CACHE_NAME = 'search-tool-cache-v12';
+const CACHE_NAME = 'search-tool-cache-v13';
 const APP_SHELL = [
   './',
   './index.html',

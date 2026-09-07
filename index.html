@@ -91,19 +91,20 @@
 </head>
 <body>
   <h2>搜尋總表</h2>
-  <input type="text" id="searchInput" placeholder="請輸入關鍵字" autocomplete="off">
+  <input type="text" id="searchInput" placeholder="搜尋名稱（多個用空格或、分開）" autocomplete="off">
   <div id="status"></div>
   <table id="data-table">
     <thead><tr><th>樓層</th><th>位置</th><th>內容物</th></tr></thead>
     <tbody></tbody>
   </table>
-  <div id="versionInfo">版本 2.1｜資料更新：2026-09-04</div>
+  <div id="versionInfo">版本 2.2｜資料更新：2026-09-04</div>
 
   <script>
     const searchInput = document.getElementById('searchInput');
     const tableBody = document.querySelector('#data-table tbody');
     const statusEl = document.getElementById('status');
     let records = [];
+    const pinyinCache = new Map();
 
     function loadPinyinHelper() {
       const script = document.createElement('script');
@@ -116,72 +117,117 @@
       document.head.appendChild(script);
     }
 
-    function appendHighlighted(cell, text, keyword) {
-      cell.textContent = '';
-      if (!keyword) {
-        cell.textContent = text;
-        return;
-      }
-      const lowerText = text.toLowerCase();
-      const lowerKeyword = keyword.toLowerCase();
-      let start = 0;
-      let pos;
-      while ((pos = lowerText.indexOf(lowerKeyword, start)) !== -1) {
-        cell.append(document.createTextNode(text.slice(start, pos)));
-        const mark = document.createElement('mark');
-        mark.textContent = text.slice(pos, pos + keyword.length);
-        cell.append(mark);
-        start = pos + keyword.length;
-      }
-      cell.append(document.createTextNode(text.slice(start)));
+    function normalizeHighlightTerms(keywords) {
+      const values = Array.isArray(keywords) ? keywords : [keywords];
+      const seen = new Set();
+      return values
+        .map(value => String(value || '').trim())
+        .filter(value => {
+          const key = value.toLowerCase();
+          if (!key || seen.has(key)) return false;
+          seen.add(key);
+          return true;
+        });
     }
 
-    function appendTwoLinesHighlighted(cell, firstLine, secondLine, keyword) {
+    function appendHighlightedNodes(parent, text, keywords) {
+      const value = String(text);
+      const terms = normalizeHighlightTerms(keywords);
+      if (!terms.length) {
+        parent.append(document.createTextNode(value));
+        return;
+      }
+
+      const lowerText = value.toLowerCase();
+      const ranges = [];
+      terms.forEach(term => {
+        const lowerTerm = term.toLowerCase();
+        let start = 0;
+        let pos;
+        while ((pos = lowerText.indexOf(lowerTerm, start)) !== -1) {
+          ranges.push([pos, pos + term.length]);
+          start = pos + Math.max(term.length, 1);
+        }
+      });
+
+      if (!ranges.length) {
+        parent.append(document.createTextNode(value));
+        return;
+      }
+
+      ranges.sort((a, b) => a[0] - b[0] || b[1] - a[1]);
+      const merged = [];
+      ranges.forEach(range => {
+        const last = merged[merged.length - 1];
+        if (last && range[0] <= last[1]) {
+          last[1] = Math.max(last[1], range[1]);
+        } else {
+          merged.push(range.slice());
+        }
+      });
+
+      let cursor = 0;
+      merged.forEach(([start, end]) => {
+        parent.append(document.createTextNode(value.slice(cursor, start)));
+        const mark = document.createElement('mark');
+        mark.textContent = value.slice(start, end);
+        parent.append(mark);
+        cursor = end;
+      });
+      parent.append(document.createTextNode(value.slice(cursor)));
+    }
+
+    function appendHighlighted(cell, text, keywords) {
+      cell.textContent = '';
+      appendHighlightedNodes(cell, text, keywords);
+    }
+
+    function appendTwoLinesHighlighted(cell, firstLine, secondLine, keywords) {
       cell.textContent = '';
       const wrapper = document.createElement('span');
       wrapper.className = 'two-line';
       const firstPart = document.createElement('span');
       const secondPart = document.createElement('span');
-      appendHighlighted(firstPart, firstLine, keyword);
-      appendHighlighted(secondPart, secondLine, keyword);
+      appendHighlighted(firstPart, firstLine, keywords);
+      appendHighlighted(secondPart, secondLine, keywords);
       wrapper.append(firstPart, secondPart);
       cell.append(wrapper);
     }
 
-    function appendFloorHighlighted(cell, text, keyword) {
+    function appendFloorHighlighted(cell, text, keywords) {
       const value = String(text).trim();
 
       if (value.startsWith('外倉')) {
         const floorPart = value.slice(2).trim();
         if (floorPart) {
-          appendTwoLinesHighlighted(cell, '外倉', floorPart, keyword);
+          appendTwoLinesHighlighted(cell, '外倉', floorPart, keywords);
           return;
         }
       }
 
       const match = value.match(/^(\d+F)\s*(.+)$/i);
       if (match) {
-        appendTwoLinesHighlighted(cell, match[1], match[2], keyword);
+        appendTwoLinesHighlighted(cell, match[1], match[2], keywords);
         return;
       }
 
-      appendHighlighted(cell, value, keyword);
+      appendHighlighted(cell, value, keywords);
     }
 
     function formatPositionText(text) {
       return String(text).replace(/\(/g, '（').replace(/\)/g, '）');
     }
 
-    function appendPositionHighlighted(cell, text, keyword) {
+    function appendPositionHighlighted(cell, text, keywords) {
       const value = formatPositionText(text).trim();
       const match = value.match(/^([^（]+)(（.+）)$/);
 
       if (match) {
-        appendTwoLinesHighlighted(cell, match[1].trim(), match[2].trim(), keyword);
+        appendTwoLinesHighlighted(cell, match[1].trim(), match[2].trim(), keywords);
         return;
       }
 
-      appendHighlighted(cell, value, keyword);
+      appendHighlighted(cell, value, keywords);
     }
 
     function getDisplayCabinet(record) {
@@ -196,17 +242,60 @@
       return record.cabinet;
     }
 
+    function getRecordSearchText(record) {
+      return [record.floor, getDisplayCabinet(record), record.contents]
+        .join(' ')
+        .toLowerCase();
+    }
+
+    function uniqueSearchTerms(values) {
+      const seen = new Set();
+      return values
+        .map(value => String(value || '').trim())
+        .filter(value => {
+          const key = value.toLowerCase();
+          if (!key || seen.has(key)) return false;
+          seen.add(key);
+          return true;
+        });
+    }
+
+    function splitSearchChunk(value) {
+      const chunk = String(value || '').trim();
+      if (!chunk || !/\s/.test(chunk)) return chunk ? [chunk] : [];
+
+      const lowerChunk = chunk.toLowerCase();
+      const hasFullExactMatch = records.some(record =>
+        getRecordSearchText(record).includes(lowerChunk)
+      );
+      return hasFullExactMatch ? [chunk] : chunk.split(/\s+/);
+    }
+
+    function getSearchTerms(input) {
+      const query = String(input || '').trim();
+      if (!query) return [];
+
+      const chunks = query.split(/[,，、;；\r\n]+/);
+      return uniqueSearchTerms(chunks.flatMap(splitSearchChunk));
+    }
+
+    window.searchToolGetTerms = getSearchTerms;
+
     function containsChinese(text) {
       return /[\u3400-\u9fff]/.test(text);
     }
 
     function toPlainPinyin(text) {
       if (!window.pinyinPro || typeof window.pinyinPro.pinyin !== 'function') return '';
+      const key = String(text);
+      if (pinyinCache.has(key)) return pinyinCache.get(key);
       try {
-        return window.pinyinPro.pinyin(text, {
+        const result = window.pinyinPro.pinyin(key, {
           toneType: 'none',
           removeNonZh: true
         }).replace(/\s+/g, '').toLowerCase();
+        pinyinCache.set(key, result);
+        return result;
       } catch (error) {
         return '';
       }
@@ -281,7 +370,7 @@
       return contents.split(/[,，]/).some(part => smartSegmentMatches(part.trim(), keyword));
     }
 
-    function appendSmartHighlighted(cell, text, keyword) {
+    function appendSmartHighlighted(cell, text, exactTerms, smartTerms) {
       cell.textContent = '';
       const parts = text.split(/([,，])/);
 
@@ -291,8 +380,8 @@
           continue;
         }
 
-        if (!smartSegmentMatches(part.trim(), keyword)) {
-          cell.append(document.createTextNode(part));
+        if (!smartTerms.some(term => smartSegmentMatches(part.trim(), term))) {
+          appendHighlightedNodes(cell, part, exactTerms);
           continue;
         }
 
@@ -366,48 +455,63 @@
         .map(({ _index, ...record }) => record);
     }
 
-    function render() {
-      const keyword = searchInput.value.trim();
-      const lowerKeyword = keyword.toLowerCase();
-      const fragment = document.createDocumentFragment();
-      const exactMatchIndexes = new Set();
+    function getTermStates(terms) {
+      const states = terms.map(term => ({
+        term,
+        lowerTerm: term.toLowerCase(),
+        exactMatchIndexes: new Set()
+      }));
 
-      if (lowerKeyword) {
-        records.forEach((record, index) => {
-          const values = [record.floor, getDisplayCabinet(record), record.contents];
-          if (values.join(' ').toLowerCase().includes(lowerKeyword)) {
-            exactMatchIndexes.add(index);
+      records.forEach((record, index) => {
+        const searchText = getRecordSearchText(record);
+        states.forEach(state => {
+          if (searchText.includes(state.lowerTerm)) {
+            state.exactMatchIndexes.add(index);
           }
         });
-      }
+      });
 
-      const hasExactMatches = exactMatchIndexes.size > 0;
+      return states;
+    }
+
+    function getRecordMatches(record, index, termStates) {
+      const exactTerms = [];
+      const smartTerms = [];
+
+      termStates.forEach(state => {
+        if (state.exactMatchIndexes.size > 0) {
+          if (state.exactMatchIndexes.has(index)) exactTerms.push(state.term);
+        } else if (contentHasSmartMatch(record.contents, state.term)) {
+          smartTerms.push(state.term);
+        }
+      });
+
+      return { exactTerms, smartTerms };
+    }
+
+    function render() {
+      const terms = getSearchTerms(searchInput.value);
+      const fragment = document.createDocumentFragment();
+      const termStates = getTermStates(terms);
 
       records.forEach((record, index) => {
         const values = [record.floor, getDisplayCabinet(record), record.contents];
-        let useSmartHighlight = false;
+        const { exactTerms, smartTerms } = getRecordMatches(record, index, termStates);
 
-        if (lowerKeyword) {
-          if (hasExactMatches) {
-            if (!exactMatchIndexes.has(index)) return;
-          } else {
-            if (!contentHasSmartMatch(record.contents, keyword)) return;
-            useSmartHighlight = true;
-          }
-        }
+        if (termStates.length && !exactTerms.length && !smartTerms.length) return;
 
         const tr = document.createElement('tr');
 
         values.forEach((value, valueIndex) => {
           const td = document.createElement('td');
           if (valueIndex === 0) {
-            appendFloorHighlighted(td, value, keyword);
+            appendFloorHighlighted(td, value, exactTerms);
           } else if (valueIndex === 1) {
-            appendPositionHighlighted(td, value, keyword);
-          } else if (useSmartHighlight) {
-            appendSmartHighlighted(td, value, keyword);
+            appendPositionHighlighted(td, value, exactTerms);
+          } else if (smartTerms.length) {
+            appendSmartHighlighted(td, value, exactTerms, smartTerms);
           } else {
-            appendHighlighted(td, value, keyword);
+            appendHighlighted(td, value, exactTerms);
           }
           tr.append(td);
         });
