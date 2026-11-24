@@ -536,6 +536,8 @@
       }
     }
 
+    const requestedSearch = new URLSearchParams(location.hash.slice(1)).get('q');
+    if (requestedSearch) searchInput.value = requestedSearch.slice(0, 1600);
     searchInput.addEventListener('input', render);
     loadPinyinHelper();
     loadData();
